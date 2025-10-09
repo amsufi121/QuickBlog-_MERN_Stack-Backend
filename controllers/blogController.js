@@ -3,6 +3,7 @@ import ImageKit from "imagekit";
 import imagekit from "../config/imageKit.js";
 import Blog from "../models/Blogs.js";
 import Comment from "../models/Comment.js";
+import main from "../config/gemini.js";
 
 export const addBlog = async (req, res) => {
   try {
@@ -120,6 +121,18 @@ export const getBlogComments = async (req, res) => {
       isApproved: true,
     }).sort({ createdAt: -1 });
     res.json({ success: true, comments });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const generateContent = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const content = await main(
+      prompt + "generate a blog content for this topic in simple text format"
+    );
+    res.json({ success: true, content });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
